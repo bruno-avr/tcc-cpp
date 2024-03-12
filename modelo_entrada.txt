@@ -1,0 +1,23 @@
+n de professores
+{
+    professor_id num_disciplinas
+    {
+        disciplina_id
+    }[num_disciplinas]
+}[n]
+
+n de series
+{
+    serie_id num_disciplinas
+    {
+        disciplina_id num_aulas
+    }[num_disciplinas]
+}[n]
+
+n de turmas
+{
+    turma_id serie_id num_horarios
+    {
+        horario
+    }[num_horarios]
+}[n]
