@@ -1,0 +1,50 @@
+5
+Bruno 4
+Mat6
+Mat7
+Mat8
+Mat9
+Felipe 4
+Port6
+Port7
+Port8
+Port9
+Lademir 2
+Cie6
+Cie7
+Jonas 2
+Cie8
+Cie9
+Luisa 2
+Fil8
+Fil9
+
+4
+Ano6 3
+Mat6 4
+Port6 4
+Cie6 2
+Ano7 3
+Mat7 4
+Port7 4
+Cie7 2
+Ano8 4
+Mat8 4
+Port8 4
+Cie8 2
+Fil8 2
+Ano9 4
+Mat9 4
+Port9 4
+Cie9 2
+Fil9 2
+
+4
+Turma6 Ano6 20
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20
+Turma7 Ano7 20
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20
+Turma8 Ano8 20
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20
+Turma9 Ano9 20
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20
