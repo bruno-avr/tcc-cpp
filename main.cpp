@@ -4,6 +4,8 @@
 #include "Teacher.h"
 #include "Grade.h"
 #include "Class.h"
+#include "SimulatedAnnealing.h"
+#include "Timetable.h"
 
 using namespace std;
 
@@ -71,6 +73,9 @@ int main() {
     vector<Teacher> teachers = getTeachers();
     vector<Grade> grades = getGrades();
     vector<Class> classes = getClasses();
+
+    SimulatedAnnealing simulatedAnnealing(teachers, grades, classes);
+    Timetable schedule = simulatedAnnealing.calculate();
     
     // for (auto teacher : teachers) cout << teacher.toString();
     // for (auto grade : grades) cout << grade.toString();

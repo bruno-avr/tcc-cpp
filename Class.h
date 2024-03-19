@@ -2,12 +2,14 @@
 #define CLASS_H
 #include <string>
 #include <set>
+#include <vector>
 
 using namespace std;
 
 class Class {
   string id, gradeId;
-  set<int> availabilitySchedule;
+  int numAvailableTimes;
+  vector<set<int>> availabilitySchedule;
 
 public:
   Class(string _id, string _gradeId);
