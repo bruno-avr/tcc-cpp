@@ -14,6 +14,7 @@ public:
   
   void addSubject(string subjectId, int numWeeklyLessons);
   string toString();
+  const string getId() const;
 
 };
 

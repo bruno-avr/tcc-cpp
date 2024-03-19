@@ -1,7 +1,8 @@
 #include "Class.h"
+#include <algorithm>
 
 Class::Class(string _id, string _gradeId)
-    : id(_id), gradeId(_gradeId), numAvailableTimes(0), availabilitySchedule(vector<set<int>>(7)) {}
+    : id(_id), gradeId(_gradeId), numAvailableTimes(0), availabilitySchedule(vector<vector<int>>(7)) {}
 
 void Class::addTime(int time) {
     numAvailableTimes++;
@@ -9,7 +10,10 @@ void Class::addTime(int time) {
     
     int weekDay = time / minutesInDay;
     int timeInDay = time - (weekDay * minutesInDay);
-    availabilitySchedule[weekDay].insert(timeInDay);
+
+    // sorted insert
+    auto &v = availabilitySchedule[weekDay];
+    v.insert(upper_bound(v.begin(), v.end(), timeInDay), timeInDay);
 }
 
 string Class::toString() {
@@ -21,4 +25,12 @@ string Class::toString() {
     }
     s += "\n\n";
     return s;
+}
+
+const vector<vector<int>> &Class::getAvailabilitySchedule() const {
+    return availabilitySchedule;
+}
+
+const string Class::getGradeId() const {
+    return gradeId;
 }

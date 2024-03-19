@@ -9,12 +9,14 @@ using namespace std;
 class Class {
   string id, gradeId;
   int numAvailableTimes;
-  vector<set<int>> availabilitySchedule;
+  vector<vector<int>> availabilitySchedule;
 
 public:
   Class(string _id, string _gradeId);
   void addTime(int time);
   string toString();
+  const vector<vector<int>> &getAvailabilitySchedule() const;
+  const string getGradeId() const;
 
 };
 

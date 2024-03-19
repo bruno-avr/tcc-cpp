@@ -15,3 +15,7 @@ string Grade::toString() {
     s += "\n";
     return s;
 }
+
+const string Grade::getId() const {
+    return id;
+}

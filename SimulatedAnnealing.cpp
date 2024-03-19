@@ -3,7 +3,7 @@
 SimulatedAnnealing::SimulatedAnnealing(vector<Teacher> _teachers, vector<Grade> _grades, vector<Class> _classes)
     : teachers(_teachers), grades(_grades), classes(_classes) {}
 
-Timetable SimulatedAnnealing::calculate() {
-    Timetable schedule;
+Timetables SimulatedAnnealing::calculate() {
+    Timetables schedule(classes);
     return schedule;
 }

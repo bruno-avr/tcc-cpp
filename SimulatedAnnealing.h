@@ -4,7 +4,7 @@
 #include "Teacher.h"
 #include "Grade.h"
 #include "Class.h"
-#include "Timetable.h"
+#include "Timetables.h"
 
 using namespace std;
 
@@ -16,7 +16,7 @@ class SimulatedAnnealing {
 public:
   SimulatedAnnealing(vector<Teacher> _teachers, vector<Grade> _grades, vector<Class> _classes);
   
-  Timetable calculate();
+  Timetables calculate();
 };
 
 
