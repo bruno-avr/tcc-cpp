@@ -13,6 +13,8 @@ public:
   Teacher(string _id);
   void addSubject(string subject);
   string toString();
+  const unordered_set<string> getSubjects() const;
+  const string getId() const;
 
 };
 

@@ -74,8 +74,11 @@ int main() {
     vector<Grade> grades = getGrades();
     vector<Class> classes = getClasses();
 
-    SimulatedAnnealing simulatedAnnealing(teachers, grades, classes);
-    Timetables schedule = simulatedAnnealing.calculate();
+    Timetables schedule = Timetables(teachers, classes, grades);
+    cout << schedule.toString() << endl;
+
+    // SimulatedAnnealing simulatedAnnealing(teachers, grades, classes);
+    // Timetables schedule = simulatedAnnealing.calculate();
     
     // for (auto teacher : teachers) cout << teacher.toString();
     // for (auto grade : grades) cout << grade.toString();

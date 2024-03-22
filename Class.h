@@ -16,6 +16,7 @@ public:
   void addTime(int time);
   string toString();
   const vector<vector<int>> &getAvailabilitySchedule() const;
+  const string getId() const;
   const string getGradeId() const;
 
 };

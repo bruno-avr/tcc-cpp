@@ -31,6 +31,10 @@ const vector<vector<int>> &Class::getAvailabilitySchedule() const {
     return availabilitySchedule;
 }
 
+const string Class::getId() const {
+    return id;
+}
+
 const string Class::getGradeId() const {
     return gradeId;
 }

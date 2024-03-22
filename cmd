@@ -1,0 +1,1 @@
+clear && g++ *.cpp && ./a.out < in.txt
