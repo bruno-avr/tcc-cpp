@@ -25,6 +25,7 @@ Timetables::Timetables(vector<Teacher> &_teachers, vector<Class> &_classes, vect
         for (int j = i+1; j < timetables.size(); j++) {
             numConflicts += timetables[i].calculateNumConflicts(timetables[j]);
         }
+        numConflicts += timetables[i].getNumOverloadedSubjects();
     }
 }
 
@@ -46,7 +47,7 @@ Swap Timetables::makeRandomSwap() {
         oldNumConflicts+=timetables[randomTimetable].getNumConflictsInPos(timetables[i], swap.getDay2(), swap.getPos2());
     }
 
-    timetables[randomTimetable].makeSwap(swap);
+    int delta = timetables[randomTimetable].makeSwap(swap);
 
     for (int i = 0; i < timetables.size(); i++) {
         if (i == randomTimetable) continue;
@@ -54,7 +55,7 @@ Swap Timetables::makeRandomSwap() {
         newNumConflicts+=timetables[randomTimetable].getNumConflictsInPos(timetables[i], swap.getDay2(), swap.getPos2());
     }
 
-    int delta = newNumConflicts - oldNumConflicts;
+    delta += newNumConflicts - oldNumConflicts;
     swap.addDelta(delta);
     
     numConflicts += delta;

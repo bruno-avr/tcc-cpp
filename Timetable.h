@@ -12,6 +12,7 @@ class Timetable {
   vector<vector<int>> startingTimes;
   vector<vector<string>> currSubjects;
   vector<vector<string>> currTeachers;
+  vector<unordered_map<string, int>> numSubjectsPerDay;
   string classId;
 
 public:
@@ -21,7 +22,8 @@ public:
   int getNumConflictsInPos(Timetable &other, int weekDay, int pos);
   int getNumConflictsInTimestamp(string &teacherId, int weekDay, int startingTime);
   Swap getRandomSwap();
-  void makeSwap(Swap &_swap);
+  int makeSwap(Swap &_swap);
+  int getNumOverloadedSubjects();
 
 private:
   int getRandomDay();

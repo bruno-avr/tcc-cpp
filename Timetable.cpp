@@ -4,12 +4,14 @@
 const string EMPTY = "EMPTY";
 const int NUM_WEEK_DAYS = 7;
 const int CLASS_LENGTH = 50; // in minutes
+const int MAX_DAILY_CLASS_LIMIT = 2; // maximum number of the same class that can be held in a single day
 
 Timetable::Timetable(Class &_class, Grade &_grade, unordered_map<string, string> &_teacherIdBySubjectId) {
     classId = _class.getId();
     startingTimes = vector<vector<int>>(NUM_WEEK_DAYS);
     currSubjects = vector<vector<string>>(NUM_WEEK_DAYS);
     currTeachers = vector<vector<string>>(NUM_WEEK_DAYS);
+    numSubjectsPerDay = vector<unordered_map<string, int>>(NUM_WEEK_DAYS);
     const vector<vector<int>> &availabilitySchedule = _class.getAvailabilitySchedule();
     const vector<pair<string, int>> &subjects = _grade.getSubjects();
 
@@ -26,6 +28,7 @@ Timetable::Timetable(Class &_class, Grade &_grade, unordered_map<string, string>
 
             currSubjects[weekDay].push_back(subjects[currSubject].first);
             currTeachers[weekDay].push_back(_teacherIdBySubjectId[subjects[currSubject].first]);
+            numSubjectsPerDay[weekDay][subjects[currSubject].first]++;
 
             if (++numInserted == subjects[currSubject].second) { // if inserted all weekly classes of this subject
                 numInserted = 0;
@@ -81,6 +84,16 @@ int Timetable::getNumConflictsInPos(Timetable &other, int weekDay, int pos) {
     return 0;
 }
 
+int Timetable::getNumOverloadedSubjects() {
+    int num = 0;
+    for (auto weekDay : numSubjectsPerDay) {
+        for (auto subject : weekDay) {
+            num += max(MAX_DAILY_CLASS_LIMIT, subject.second)-MAX_DAILY_CLASS_LIMIT;
+        }
+    }
+    return num;
+}
+
 int Timetable::getRandomDay() {
     int randomDay;
     do { // it is expected that every timetable contains a non empty day
@@ -99,9 +112,22 @@ Swap Timetable::getRandomSwap() {
     return Swap(randomDay1, randomPos1, randomDay2, randomPos2);
 }
 
-void Timetable::makeSwap(Swap &_swap) {
+int Timetable::makeSwap(Swap &_swap) {
+    int delta = 0;
+    int oldSub = numSubjectsPerDay[_swap.getDay1()][currSubjects[_swap.getDay1()][_swap.getPos1()]]--;
+    int oldAdd = numSubjectsPerDay[_swap.getDay1()][currSubjects[_swap.getDay2()][_swap.getPos2()]]++;
+    if (oldSub > MAX_DAILY_CLASS_LIMIT) delta--;
+    if (oldAdd >= MAX_DAILY_CLASS_LIMIT) delta++;
+
+    oldSub = numSubjectsPerDay[_swap.getDay2()][currSubjects[_swap.getDay2()][_swap.getPos2()]]--;
+    oldAdd = numSubjectsPerDay[_swap.getDay2()][currSubjects[_swap.getDay1()][_swap.getPos1()]]++;
+    if (oldSub > MAX_DAILY_CLASS_LIMIT) delta--;
+    if (oldAdd >= MAX_DAILY_CLASS_LIMIT) delta++;
+
     swap(currSubjects[_swap.getDay1()][_swap.getPos1()], currSubjects[_swap.getDay2()][_swap.getPos2()]);
     swap(currTeachers[_swap.getDay1()][_swap.getPos1()], currTeachers[_swap.getDay2()][_swap.getPos2()]);
+
+    return delta;
 }
 
 string convertTime(int time) {
