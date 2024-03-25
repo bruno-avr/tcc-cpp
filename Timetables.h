@@ -6,6 +6,7 @@
 #include "Class.h"
 #include "Grade.h"
 #include "Timetable.h"
+#include "Swap.h"
 
 using namespace std;
 
@@ -20,9 +21,9 @@ class Timetables {
 public:
   Timetables(vector<Teacher> &_teachers, vector<Class> &_classes, vector<Grade> &_grades);
   string toString();
-
-private:
-  int calculateNumConflicts();
+  int getNumConflicts();
+  Swap makeRandomSwap();
+  void makeSwap(Swap _swap);
 
 };
 

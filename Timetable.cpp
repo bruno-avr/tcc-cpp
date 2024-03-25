@@ -1,5 +1,6 @@
 #include "Timetable.h"
 #include <iostream>
+#include <algorithm>
 const string EMPTY = "EMPTY";
 const int NUM_WEEK_DAYS = 7;
 const int CLASS_LENGTH = 50; // in minutes
@@ -39,13 +40,14 @@ Timetable::Timetable(Class &_class, Grade &_grade, unordered_map<string, string>
     
 }
 
-bool Timetable::isTeacherInTimestamp(string &teacherId, int weekDay, int startingTime) {
+int Timetable::getNumConflictsInTimestamp(string &teacherId, int weekDay, int startingTime) {
+    int conflictsInTimestamp = 0;
     // find some class that ends between the start and the end of this class
     auto low1 = lower_bound(startingTimes[weekDay].begin(), startingTimes[weekDay].end(), startingTime-CLASS_LENGTH+1);
     if (low1 != startingTimes[weekDay].end()) {
         int pos = low1 - startingTimes[weekDay].begin();
         if (startingTimes[weekDay][pos] < startingTime) {
-            if (currTeachers[weekDay][pos] == teacherId) return true;
+            if (currTeachers[weekDay][pos] == teacherId) conflictsInTimestamp++;
         }
     }
 
@@ -54,10 +56,10 @@ bool Timetable::isTeacherInTimestamp(string &teacherId, int weekDay, int startin
     if (low2 != startingTimes[weekDay].end()) {
         int pos = low2 - startingTimes[weekDay].begin();
         if (startingTimes[weekDay][pos] < startingTime+CLASS_LENGTH) {
-            if (currTeachers[weekDay][pos] == teacherId) return true;
+            if (currTeachers[weekDay][pos] == teacherId) conflictsInTimestamp++;
         }
     }
-    return false;
+    return conflictsInTimestamp;
 }
 
 int Timetable::calculateNumConflicts(Timetable &other) {
@@ -65,13 +67,42 @@ int Timetable::calculateNumConflicts(Timetable &other) {
     for (int i = 0; i < NUM_WEEK_DAYS; i++) {
         for (int j = 0; j < currTeachers[i].size(); j++) {
             if (currTeachers[i][j] != EMPTY) {
-                if (other.isTeacherInTimestamp(currTeachers[i][j], i, startingTimes[i][j])) {
-                    num++;
-                }
+                num += other.getNumConflictsInTimestamp(currTeachers[i][j], i, startingTimes[i][j]);
             }
         }
     }
     return num;
+}
+
+int Timetable::getNumConflictsInPos(Timetable &other, int weekDay, int pos) {
+    if (currTeachers[weekDay][pos] != EMPTY) {
+        return other.getNumConflictsInTimestamp(currTeachers[weekDay][pos], weekDay, startingTimes[weekDay][pos]);
+    }
+    return 0;
+}
+
+int Timetable::getRandomDay() {
+    int randomDay;
+    do { // it is expected that every timetable contains a non empty day
+        randomDay = rand() % startingTimes.size();
+    } while (startingTimes[randomDay].size() == 0);
+    return randomDay;
+}
+
+Swap Timetable::getRandomSwap() {
+    int randomDay1 = getRandomDay();
+    int randomPos1 = rand() % startingTimes[randomDay1].size();
+
+    int randomDay2 = getRandomDay();
+    int randomPos2 = rand() % startingTimes[randomDay2].size();
+
+    return Swap(randomDay1, randomPos1, randomDay2, randomPos2);
+}
+
+void Timetable::makeSwap(Swap &_swap) {
+    swap(startingTimes[_swap.getDay1()][_swap.getPos1()], startingTimes[_swap.getDay2()][_swap.getPos2()]);
+    swap(currSubjects[_swap.getDay1()][_swap.getPos1()], currSubjects[_swap.getDay2()][_swap.getPos2()]);
+    swap(currTeachers[_swap.getDay1()][_swap.getPos1()], currTeachers[_swap.getDay2()][_swap.getPos2()]);
 }
 
 string convertTime(int time) {

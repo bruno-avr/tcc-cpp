@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <stdlib.h>
+#include <time.h>
 #include "Teacher.h"
 #include "Grade.h"
 #include "Class.h"
@@ -70,19 +72,21 @@ vector<Class> getClasses() {
 }
 
 int main() {
+    srand(time(0));
+    
     vector<Teacher> teachers = getTeachers();
     vector<Grade> grades = getGrades();
     vector<Class> classes = getClasses();
 
-    Timetables schedule = Timetables(teachers, classes, grades);
-    cout << schedule.toString() << endl;
-
-    // SimulatedAnnealing simulatedAnnealing(teachers, grades, classes);
-    // Timetables schedule = simulatedAnnealing.calculate();
-    
     // for (auto teacher : teachers) cout << teacher.toString();
     // for (auto grade : grades) cout << grade.toString();
     // for (auto thisClass : classes) cout << thisClass.toString();
+
+    SimulatedAnnealing simulatedAnnealing(teachers, classes, grades);
+    Timetables timetables = simulatedAnnealing.calculate();
+
+    cout << timetables.toString();
+    cout << "Num Conflicts: " << timetables.getNumConflicts() << endl;
     
     return 0;
 }
