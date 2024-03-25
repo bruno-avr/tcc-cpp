@@ -100,7 +100,6 @@ Swap Timetable::getRandomSwap() {
 }
 
 void Timetable::makeSwap(Swap &_swap) {
-    swap(startingTimes[_swap.getDay1()][_swap.getPos1()], startingTimes[_swap.getDay2()][_swap.getPos2()]);
     swap(currSubjects[_swap.getDay1()][_swap.getPos1()], currSubjects[_swap.getDay2()][_swap.getPos2()]);
     swap(currTeachers[_swap.getDay1()][_swap.getPos1()], currTeachers[_swap.getDay2()][_swap.getPos2()]);
 }
