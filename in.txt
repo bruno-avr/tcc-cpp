@@ -1,23 +1,23 @@
 5
 Bruno 4
-Mat6
-Mat7
-Mat8
-Mat9
+Mat6 Turma6 
+Mat7 Turma7
+Mat8 Turma8
+Mat9 Turma9
 Felipe 4
-Port6
-Port7
-Port8
-Port9
+Port6 Turma6
+Port7 Turma7
+Port8 Turma8
+Port9 Turma9
 Lademir 2
-Cie6
-Cie7
+Cie6 Turma6
+Cie7 Turma7
 Jonas 2
-Cie8
-Cie9
+Cie8 Turma8
+Cie9 Turma9
 Luisa 2
-Fil8
-Fil9
+Fil8 Turma8
+Fil9 Turma9
 
 4
 Ano6 3

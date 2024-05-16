@@ -2,7 +2,7 @@ n de professores
 {
     professor_id num_disciplinas
     {
-        disciplina_id
+        disciplina_id turma_id
     }[num_disciplinas]
 }[n]
 

@@ -13,7 +13,7 @@ using namespace std;
 
 vector<Teacher> getTeachers() {
     int numTeachers, numSubjects;
-    string teacherId, subjectId;
+    string teacherId, subjectId, classId;
     vector<Teacher> teachers;
 
     cin >> numTeachers;
@@ -22,8 +22,8 @@ vector<Teacher> getTeachers() {
         cin >> teacherId >> numSubjects;
         Teacher teacher(teacherId);
         for (int j = 0; j < numSubjects; j++) {
-            cin >> subjectId;
-            teacher.addSubject(subjectId);
+            cin >> subjectId >> classId;
+            teacher.addSubject(subjectId, classId);
         }
         teachers.push_back(teacher);
     }
@@ -85,8 +85,9 @@ int main() {
     SimulatedAnnealing simulatedAnnealing(teachers, classes, grades);
     Timetables timetables = simulatedAnnealing.calculate();
 
-    cout << timetables.toString();
-    cout << "Num Conflicts: " << timetables.getNumConflicts() << endl;
+    // cout << timetables.toString();
+    // cout << "Num Conflicts: " << timetables.getNumConflicts() << endl;
+    cout << timetables.getJSON() << endl;
     
     return 0;
 }

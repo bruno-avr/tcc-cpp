@@ -2,6 +2,7 @@
 #define TIMETABLE_H
 #include <vector>
 #include <string>
+#include <map>
 #include "Class.h"
 #include "Grade.h"
 #include "Swap.h"
@@ -16,8 +17,9 @@ class Timetable {
   string classId;
 
 public:
-  Timetable(Class &_class, Grade &_grade, unordered_map<string, string> &_teacherIdBySubjectId);
+  Timetable(Class &_class, Grade &_grade, map<pair<string,string>, string> &_teacherIdBySubject);
   string toString();
+  string getJSON();
   int calculateNumConflicts(Timetable &other);
   int getNumConflictsInPos(Timetable &other, int weekDay, int pos);
   int getNumConflictsInTimestamp(string &teacherId, int weekDay, int startingTime);

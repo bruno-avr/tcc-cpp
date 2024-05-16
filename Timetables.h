@@ -2,6 +2,7 @@
 #define TIMETABLES_H
 #include <vector>
 #include <unordered_map>
+#include <map>
 #include "Teacher.h"
 #include "Class.h"
 #include "Grade.h"
@@ -14,13 +15,14 @@ class Timetables {
   int numClasses;
   vector<Class> classes;
   unordered_map<string, Grade> gradeById;
-  unordered_map<string, string> teacherIdBySubjectId;
+  map<pair<string, string>, string> teacherIdBySubject;
   vector<Timetable> timetables;
   int numConflicts;
 
 public:
   Timetables(vector<Teacher> &_teachers, vector<Class> &_classes, vector<Grade> &_grades);
   string toString();
+  string getJSON();
   int getNumConflicts();
   Swap makeRandomSwap();
   void makeSwap(Swap _swap);

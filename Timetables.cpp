@@ -3,9 +3,9 @@
 #include <stdlib.h>
 
 Timetables::Timetables(vector<Teacher> &_teachers, vector<Class> &_classes, vector<Grade> &_grades) {
-    for (auto teacher : _teachers) {
-        for (auto subject : teacher.getSubjects()) {
-            teacherIdBySubjectId[subject] = teacher.getId();
+    for (auto &teacher : _teachers) {
+        for (auto &subject : teacher.getSubjects()) {
+            teacherIdBySubject[subject] = teacher.getId();
         }
     }
 
@@ -16,7 +16,7 @@ Timetables::Timetables(vector<Teacher> &_teachers, vector<Class> &_classes, vect
     timetables = vector<Timetable>();
 
     for (int i = 0; i < _classes.size(); i++) {
-        timetables.push_back(Timetable(_classes[i], gradeById[_classes[i].getGradeId()], teacherIdBySubjectId));
+        timetables.push_back(Timetable(_classes[i], gradeById[_classes[i].getGradeId()], teacherIdBySubject));
     }
     
     // calculating number of conflicts
@@ -74,5 +74,16 @@ string Timetables::toString() {
         s += timetable.toString() + "\n";
     }
     s += "\n";
+    return s;
+}
+
+string Timetables::getJSON() {
+    string s = "{\n";
+    s += "  \"schedules\": [\n";
+    for (int i = 0; i < timetables.size(); i++) {
+        if (i > 0) s += ",\n";
+        s += timetables[i].getJSON();
+    }
+    s += "\n  ]\n}";
     return s;
 }

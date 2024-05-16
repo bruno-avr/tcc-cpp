@@ -6,7 +6,7 @@ const int NUM_WEEK_DAYS = 7;
 const int CLASS_LENGTH = 50; // in minutes
 const int MAX_DAILY_CLASS_LIMIT = 2; // maximum number of the same class that can be held in a single day
 
-Timetable::Timetable(Class &_class, Grade &_grade, unordered_map<string, string> &_teacherIdBySubjectId) {
+Timetable::Timetable(Class &_class, Grade &_grade, map<pair<string,string>, string> &_teacherIdBySubject) {
     classId = _class.getId();
     startingTimes = vector<vector<int>>(NUM_WEEK_DAYS);
     currSubjects = vector<vector<string>>(NUM_WEEK_DAYS);
@@ -27,7 +27,12 @@ Timetable::Timetable(Class &_class, Grade &_grade, unordered_map<string, string>
             }
 
             currSubjects[weekDay].push_back(subjects[currSubject].first);
-            currTeachers[weekDay].push_back(_teacherIdBySubjectId[subjects[currSubject].first]);
+            // if class has a teacher for that subject
+            if (_teacherIdBySubject.count({subjects[currSubject].first, classId})) {
+                currTeachers[weekDay].push_back(_teacherIdBySubject[{subjects[currSubject].first, classId}]);
+            } else {
+                currTeachers[weekDay].push_back(EMPTY);
+            }
             numSubjectsPerDay[weekDay][subjects[currSubject].first]++;
 
             if (++numInserted == subjects[currSubject].second) { // if inserted all weekly classes of this subject
@@ -148,5 +153,24 @@ string Timetable::toString() {
         }
         s += "\n";
     }
+    return s;
+}
+
+string Timetable::getJSON() {
+    int minutesInDay = 24*60;
+    string s = "    {\n";
+    s += "      \"classId\": \"" + classId + "\",\n";
+    s += "      \"lessons\": [\n";
+    for (int i = 0; i < NUM_WEEK_DAYS; i++) {
+        for (int j = 0; j < startingTimes[i].size(); j++) {
+            if (i+j > 0) s += ",\n";
+            s += "        {\n";
+            s += "          \"startingTime\": " + to_string(startingTimes[i][j] + minutesInDay*i) + ",\n";
+            s += "          \"subjectId\": \"" + currSubjects[i][j] + "\"\n";
+            s += "        }";
+        }
+    }
+    s += "\n      ]\n";
+    s += "    }";
     return s;
 }
