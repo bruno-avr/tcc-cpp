@@ -79,6 +79,13 @@ string Timetables::toString() {
 
 string Timetables::getJSON() {
     string s = "{\n";
+
+    s += "  \"isFeasible\": ";
+    if (numConflicts == 0) s += "true,\n";
+    else s += "false,\n";
+
+    s += "  \"score\": 0,\n";
+
     s += "  \"schedules\": [\n";
     for (int i = 0; i < timetables.size(); i++) {
         if (i > 0) s += ",\n";
