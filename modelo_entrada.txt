@@ -1,3 +1,5 @@
+simulatedAnnealing fixed_recalculation
+
 n de professores
 {
     professor_id num_disciplinas

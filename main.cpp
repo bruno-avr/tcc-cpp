@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <unordered_map>
+#include <unordered_set>
 #include <stdlib.h>
 #include <time.h>
 #include "Teacher.h"
@@ -51,19 +53,29 @@ vector<Grade> getGrades() {
     return grades;
 }
 
-vector<Class> getClasses() {
+unordered_map<string, unordered_set<int>> fixedTimes;
+
+vector<Class> getClasses(bool hasDefaultSchedule) {
     int numClasses, numTimes, time;
-    string classId, gradeId;
+    string classId, gradeId, subjectId, teacherId;
+    bool isFixed;
     vector<Class> classes;
 
     cin >> numClasses;
 
     for (int i = 0; i < numClasses; i++) {
         cin >> classId >> gradeId >> numTimes;
-        Class thisClass(classId, gradeId);
+        Class thisClass(classId, gradeId, hasDefaultSchedule);
         for (int j = 0; j < numTimes; j++) {
             cin >> time;
-            thisClass.addTime(time);
+            if (hasDefaultSchedule) {
+                cin >> subjectId >> teacherId >> isFixed;
+                thisClass.addTime(time, subjectId, teacherId);
+
+                if (isFixed) fixedTimes[classId].insert(time);
+            } else {
+                thisClass.addTime(time);
+            }
         }
         classes.push_back(thisClass);
     }
@@ -74,15 +86,18 @@ vector<Class> getClasses() {
 int main() {
     srand(time(0));
     
+    string type; cin >> type; // one of ["calculation", "fixed_recalculation"]
+    string metaheuristic; cin >> metaheuristic; // one of ["simulatedAnnealing"]
+
     vector<Teacher> teachers = getTeachers();
     vector<Grade> grades = getGrades();
-    vector<Class> classes = getClasses();
+    vector<Class> classes = getClasses(type == "fixed_recalculation");
 
     // for (auto teacher : teachers) cout << teacher.toString();
     // for (auto grade : grades) cout << grade.toString();
     // for (auto thisClass : classes) cout << thisClass.toString();
 
-    SimulatedAnnealing simulatedAnnealing(teachers, classes, grades);
+    SimulatedAnnealing simulatedAnnealing(teachers, classes, grades, fixedTimes);
     Timetables timetables = simulatedAnnealing.calculate();
 
     // cout << timetables.toString();

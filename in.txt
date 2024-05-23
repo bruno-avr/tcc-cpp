@@ -1,3 +1,4 @@
+simulatedAnnealing fixed_recalculatio
 5
 Bruno 4
 Mat6 Turma6 

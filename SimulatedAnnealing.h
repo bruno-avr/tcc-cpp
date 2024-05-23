@@ -14,7 +14,7 @@ class SimulatedAnnealing {
   int numIterations;
 
 public:
-  SimulatedAnnealing(vector<Teacher> &_teachers, vector<Class> &_classes, vector<Grade> &_grades);
+  SimulatedAnnealing(vector<Teacher> &_teachers, vector<Class> &_classes, vector<Grade> &_grades, unordered_map<string, unordered_set<int>> &_fixedTimes);
   Timetables calculate();
 };
 

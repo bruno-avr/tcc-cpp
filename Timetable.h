@@ -2,7 +2,9 @@
 #define TIMETABLE_H
 #include <vector>
 #include <string>
+#include <unordered_set>
 #include <map>
+#include <utility>
 #include "Class.h"
 #include "Grade.h"
 #include "Swap.h"
@@ -14,10 +16,11 @@ class Timetable {
   vector<vector<string>> currSubjects;
   vector<vector<string>> currTeachers;
   vector<unordered_map<string, int>> numSubjectsPerDay;
+  unordered_set<int> fixedTimes;
   string classId;
 
 public:
-  Timetable(Class &_class, Grade &_grade, map<pair<string,string>, string> &_teacherIdBySubject);
+  Timetable(Class &_class, Grade &_grade, map<pair<string,string>, string> &_teacherIdBySubject, unordered_set<int> &_fixedTimes);
   string toString();
   string getJSON();
   int calculateNumConflicts(Timetable &other);
@@ -29,6 +32,7 @@ public:
 
 private:
   int getRandomDay();
+  pair<int,int> getValidDayPos();
 
 };
 

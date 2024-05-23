@@ -3,8 +3,8 @@
 #include <queue>
 #include <math.h>
 
-SimulatedAnnealing::SimulatedAnnealing(vector<Teacher> &_teachers, vector<Class> &_classes, vector<Grade> &_grades)
-: timetables(Timetables(_teachers, _classes, _grades)) {
+SimulatedAnnealing::SimulatedAnnealing(vector<Teacher> &_teachers, vector<Class> &_classes, vector<Grade> &_grades, unordered_map<string, unordered_set<int>> &_fixedTimes)
+: timetables(Timetables(_teachers, _classes, _grades, _fixedTimes)) {
     initialTemperature = 100.0;
     coolingRate = 0.99;
     numIterations = 10000;

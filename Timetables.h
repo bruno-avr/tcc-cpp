@@ -2,6 +2,7 @@
 #define TIMETABLES_H
 #include <vector>
 #include <unordered_map>
+#include <unordered_set>
 #include <map>
 #include "Teacher.h"
 #include "Class.h"
@@ -20,7 +21,7 @@ class Timetables {
   int numConflicts;
 
 public:
-  Timetables(vector<Teacher> &_teachers, vector<Class> &_classes, vector<Grade> &_grades);
+  Timetables(vector<Teacher> &_teachers, vector<Class> &_classes, vector<Grade> &_grades, unordered_map<string, unordered_set<int>> &_fixedTimes);
   string toString();
   string getJSON();
   int getNumConflicts();

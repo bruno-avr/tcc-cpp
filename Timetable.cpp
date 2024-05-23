@@ -6,8 +6,10 @@ const int NUM_WEEK_DAYS = 7;
 const int CLASS_LENGTH = 50; // in minutes
 const int MAX_DAILY_CLASS_LIMIT = 2; // maximum number of the same class that can be held in a single day
 
-Timetable::Timetable(Class &_class, Grade &_grade, map<pair<string,string>, string> &_teacherIdBySubject) {
+Timetable::Timetable(Class &_class, Grade &_grade, map<pair<string,string>, string> &_teacherIdBySubject, unordered_set<int> &_fixedTimes) {
     classId = _class.getId();
+    bool hasDefaultSchedule = _class.getHasDefaultSchedule();
+    fixedTimes = _fixedTimes;
     startingTimes = vector<vector<int>>(NUM_WEEK_DAYS);
     currSubjects = vector<vector<string>>(NUM_WEEK_DAYS);
     currTeachers = vector<vector<string>>(NUM_WEEK_DAYS);
@@ -20,20 +22,30 @@ Timetable::Timetable(Class &_class, Grade &_grade, map<pair<string,string>, stri
         for (auto time : availabilitySchedule[weekDay]) {
             startingTimes[weekDay].push_back(time);
 
-            if (currSubject == subjects.size()) { // if already disposed all subjects
-                currSubjects[weekDay].push_back(EMPTY);
-                currTeachers[weekDay].push_back(EMPTY);
-                continue;
+            if (hasDefaultSchedule) {
+                auto &[subjectId, teacherId] = _class.getDefaultSchedule(weekDay, time);
+                currSubjects[weekDay].push_back(subjectId);
+                currTeachers[weekDay].push_back(teacherId);
+
+            } else {
+                if (currSubject == subjects.size()) { // if already disposed all subjects
+                    currSubjects[weekDay].push_back(EMPTY);
+                    currTeachers[weekDay].push_back(EMPTY);
+                    continue;
+                }
+
+                currSubjects[weekDay].push_back(subjects[currSubject].first);
+                // if class has a teacher for that subject
+                if (_teacherIdBySubject.count({subjects[currSubject].first, classId})) {
+                    currTeachers[weekDay].push_back(_teacherIdBySubject[{subjects[currSubject].first, classId}]);
+                } else {
+                    currTeachers[weekDay].push_back(EMPTY);
+                }
             }
 
-            currSubjects[weekDay].push_back(subjects[currSubject].first);
-            // if class has a teacher for that subject
-            if (_teacherIdBySubject.count({subjects[currSubject].first, classId})) {
-                currTeachers[weekDay].push_back(_teacherIdBySubject[{subjects[currSubject].first, classId}]);
-            } else {
-                currTeachers[weekDay].push_back(EMPTY);
+            if (currSubjects[weekDay].back() != EMPTY) {
+                numSubjectsPerDay[weekDay][currSubjects[weekDay].back()]++;
             }
-            numSubjectsPerDay[weekDay][subjects[currSubject].first]++;
 
             if (++numInserted == subjects[currSubject].second) { // if inserted all weekly classes of this subject
                 numInserted = 0;
@@ -45,7 +57,6 @@ Timetable::Timetable(Class &_class, Grade &_grade, map<pair<string,string>, stri
     if (currSubject != subjects.size()) { // couldnt dispose all subjects
         cout << "Error: more subjects than available timespans." << endl;
     }
-    
 }
 
 int Timetable::getNumConflictsInTimestamp(string &teacherId, int weekDay, int startingTime) {
@@ -107,12 +118,24 @@ int Timetable::getRandomDay() {
     return randomDay;
 }
 
-Swap Timetable::getRandomSwap() {
-    int randomDay1 = getRandomDay();
-    int randomPos1 = rand() % startingTimes[randomDay1].size();
+pair<int,int> Timetable::getValidDayPos() {
+    bool validDay = false;
+    int randomDay, randomPos;
 
-    int randomDay2 = getRandomDay();
-    int randomPos2 = rand() % startingTimes[randomDay2].size();
+    while (!validDay) {
+        randomDay = getRandomDay();
+        randomPos = rand() % startingTimes[randomDay].size();
+
+        int thisTime = randomDay * 1440 + startingTimes[randomDay][randomPos];
+        if (fixedTimes.count(thisTime) == 0) validDay = true;
+    }
+
+    return {randomDay, randomPos};
+}
+
+Swap Timetable::getRandomSwap() {
+    auto [randomDay1, randomPos1] = getValidDayPos();
+    auto [randomDay2, randomPos2] = getValidDayPos();
 
     return Swap(randomDay1, randomPos1, randomDay2, randomPos2);
 }
@@ -165,7 +188,9 @@ string Timetable::getJSON() {
         for (int j = 0; j < startingTimes[i].size(); j++) {
             if (i+j > 0) s += ",\n";
             s += "        {\n";
-            s += "          \"startingTime\": " + to_string(startingTimes[i][j] + minutesInDay*i) + ",\n";
+            int startingTime = startingTimes[i][j] + minutesInDay*i;
+            if (fixedTimes.count(startingTime)) s += "          \"isSelected\": 1,\n";
+            s += "          \"startingTime\": " + to_string(startingTime) + ",\n";
             s += "          \"subjectId\": \"" + currSubjects[i][j] + "\"\n";
             s += "        }";
         }

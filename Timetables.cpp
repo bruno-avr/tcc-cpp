@@ -2,7 +2,7 @@
 #include <iostream>
 #include <stdlib.h>
 
-Timetables::Timetables(vector<Teacher> &_teachers, vector<Class> &_classes, vector<Grade> &_grades) {
+Timetables::Timetables(vector<Teacher> &_teachers, vector<Class> &_classes, vector<Grade> &_grades, unordered_map<string, unordered_set<int>> &_fixedTimes) {
     for (auto &teacher : _teachers) {
         for (auto &subject : teacher.getSubjects()) {
             teacherIdBySubject[subject] = teacher.getId();
@@ -16,7 +16,7 @@ Timetables::Timetables(vector<Teacher> &_teachers, vector<Class> &_classes, vect
     timetables = vector<Timetable>();
 
     for (int i = 0; i < _classes.size(); i++) {
-        timetables.push_back(Timetable(_classes[i], gradeById[_classes[i].getGradeId()], teacherIdBySubject));
+        timetables.push_back(Timetable(_classes[i], gradeById[_classes[i].getGradeId()], teacherIdBySubject, _fixedTimes[_classes[i].getId()]));
     }
     
     // calculating number of conflicts
