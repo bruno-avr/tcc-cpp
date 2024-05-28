@@ -24,6 +24,7 @@ public:
   Timetables(vector<Teacher> &_teachers, vector<Class> &_classes, vector<Grade> &_grades, unordered_map<string, unordered_set<int>> &_fixedTimes);
   string toString();
   string getJSON();
+  string getScoreJSON();
   int getNumConflicts();
   Swap makeRandomSwap();
   void makeSwap(Swap _swap);

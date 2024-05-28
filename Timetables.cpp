@@ -94,3 +94,16 @@ string Timetables::getJSON() {
     s += "\n  ]\n}";
     return s;
 }
+
+string Timetables::getScoreJSON() {
+    string s = "{\n";
+
+    s += "  \"isFeasible\": ";
+    if (numConflicts == 0) s += "true,\n";
+    else s += "false,\n";
+
+    s += "  \"score\": 0\n";
+
+    s += "}";
+    return s;
+}

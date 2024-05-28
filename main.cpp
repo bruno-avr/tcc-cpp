@@ -55,7 +55,8 @@ vector<Grade> getGrades() {
 
 unordered_map<string, unordered_set<int>> fixedTimes;
 
-vector<Class> getClasses(bool hasDefaultSchedule) {
+vector<Class> getClasses(string type) {
+    bool hasDefaultSchedule = type == "calculate_score" or type == "fixed_recalculation";
     int numClasses, numTimes, time;
     string classId, gradeId, subjectId, teacherId;
     bool isFixed;
@@ -69,10 +70,13 @@ vector<Class> getClasses(bool hasDefaultSchedule) {
         for (int j = 0; j < numTimes; j++) {
             cin >> time;
             if (hasDefaultSchedule) {
-                cin >> subjectId >> teacherId >> isFixed;
+                cin >> subjectId >> teacherId;
                 thisClass.addTime(time, subjectId, teacherId);
 
-                if (isFixed) fixedTimes[classId].insert(time);
+                if (type == "fixed_recalculation") {
+                    cin >> isFixed;
+                    if (isFixed) fixedTimes[classId].insert(time);
+                }
             } else {
                 thisClass.addTime(time);
             }
@@ -86,23 +90,27 @@ vector<Class> getClasses(bool hasDefaultSchedule) {
 int main() {
     srand(time(0));
     
-    string type; cin >> type; // one of ["calculation", "fixed_recalculation"]
-    string metaheuristic; cin >> metaheuristic; // one of ["simulatedAnnealing"]
+    string type; cin >> type; // one of ["generate", "calculate_score", "fixed_recalculation"]
+    if (type != "calculate_score") {
+        string metaheuristic; cin >> metaheuristic; // one of ["simulatedAnnealing"]
+    }
 
     vector<Teacher> teachers = getTeachers();
     vector<Grade> grades = getGrades();
-    vector<Class> classes = getClasses(type == "fixed_recalculation");
+    vector<Class> classes = getClasses(type);
 
     // for (auto teacher : teachers) cout << teacher.toString();
     // for (auto grade : grades) cout << grade.toString();
     // for (auto thisClass : classes) cout << thisClass.toString();
 
-    SimulatedAnnealing simulatedAnnealing(teachers, classes, grades, fixedTimes);
-    Timetables timetables = simulatedAnnealing.calculate();
-
-    // cout << timetables.toString();
-    // cout << "Num Conflicts: " << timetables.getNumConflicts() << endl;
-    cout << timetables.getJSON() << endl;
+    if (type == "calculate_score") {
+        Timetables timetables(teachers, classes, grades, fixedTimes);
+        cout << timetables.getScoreJSON() << endl;
+    } else {
+        SimulatedAnnealing simulatedAnnealing(teachers, classes, grades, fixedTimes);
+        Timetables timetables = simulatedAnnealing.calculate();
+        cout << timetables.getJSON() << endl;
+    }
     
     return 0;
 }
