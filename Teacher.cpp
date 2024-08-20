@@ -6,6 +6,10 @@ void Teacher::addSubject(string subject, string classId) {
     subjects.insert({subject, classId});
 }
 
+void Teacher::addTimeSlot(int start, int end) {
+    timeSlots.insert({start, end});
+}
+
 const string Teacher::getId() const {
     return id;
 }
