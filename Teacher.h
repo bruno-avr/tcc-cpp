@@ -9,9 +9,10 @@ class Teacher {
   string id;
   set<pair<string, string>> subjects;
   set<pair<int, int>> timeSlots;
+  int priority;
 
 public:
-  Teacher(string _id);
+  Teacher(string _id, int _priority);
   void addSubject(string subject, string classId);
   void addTimeSlot(int start, int end);
   string toString();

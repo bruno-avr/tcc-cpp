@@ -1,6 +1,6 @@
 #include "Teacher.h"
 
-Teacher::Teacher(string _id) : id(_id) {}
+Teacher::Teacher(string _id, int _priority) : id(_id), priority(_priority) {}
 
 void Teacher::addSubject(string subject, string classId) {
     subjects.insert({subject, classId});

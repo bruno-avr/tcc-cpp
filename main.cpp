@@ -14,15 +14,15 @@
 using namespace std;
 
 vector<Teacher> getTeachers() {
-    int numTeachers, numSubjects, numTimeSlots, start, end;
+    int numTeachers, priority, numSubjects, numTimeSlots, start, end;
     string teacherId, subjectId, classId;
     vector<Teacher> teachers;
 
     cin >> numTeachers;
 
     for (int i = 0; i < numTeachers; i++) {
-        cin >> teacherId >> numSubjects >> numTimeSlots;
-        Teacher teacher(teacherId);
+        cin >> teacherId >> priority >> numSubjects >> numTimeSlots;
+        Teacher teacher(teacherId, priority);
         for (int j = 0; j < numSubjects; j++) {
             cin >> subjectId >> classId;
             teacher.addSubject(subjectId, classId);
