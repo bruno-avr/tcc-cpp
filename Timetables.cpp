@@ -88,21 +88,25 @@ string Timetables::toString() {
     return s;
 }
 
-string Timetables::getJSON() {
+string Timetables::getJSON(bool hideSchedules) {
     string s = "{\n";
 
     s += "  \"isFeasible\": ";
     if (numConflicts == 0) s += "true,\n";
     else s += "false,\n";
 
-    s += "  \"score\": " + to_string(penalty) + ",\n";
+    if (hideSchedules) {
+        s += "  \"score\": " + to_string(penalty) + "\n}";
+    } else {
+        s += "  \"score\": " + to_string(penalty) + ",\n";
 
-    s += "  \"schedules\": [\n";
-    for (int i = 0; i < timetables.size(); i++) {
-        if (i > 0) s += ",\n";
-        s += timetables[i].getJSON();
+        s += "  \"schedules\": [\n";
+        for (int i = 0; i < timetables.size(); i++) {
+            if (i > 0) s += ",\n";
+            s += timetables[i].getJSON();
+        }
+        s += "\n  ]\n}";
     }
-    s += "\n  ]\n}";
     return s;
 }
 

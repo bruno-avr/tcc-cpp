@@ -24,7 +24,7 @@ class Timetables {
 public:
   Timetables(vector<Teacher> &_teachers, vector<Class> &_classes, vector<Grade> &_grades, unordered_map<string, unordered_set<int>> &_fixedTimes);
   string toString();
-  string getJSON();
+  string getJSON(bool hideSchedules);
   string getScoreJSON();
   int getNumConflicts();
   int getPenalty();

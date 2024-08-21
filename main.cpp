@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <cstring>
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
@@ -91,7 +92,7 @@ vector<Class> getClasses(string type) {
     return classes;
 }
 
-int main() {
+int main(int argc, char **argv) {
     srand(time(0));
     
     string type; cin >> type; // one of ["generate", "calculate_score", "fixed_recalculation"]
@@ -107,13 +108,15 @@ int main() {
     // for (auto grade : grades) cout << grade.toString();
     // for (auto thisClass : classes) cout << thisClass.toString();
 
+    bool hideSchedules = argc >= 2 and (strcmp(argv[1], "hide-schedules") == 0);
+
     if (type == "calculate_score") {
         Timetables timetables(teachers, classes, grades, fixedTimes);
         cout << timetables.getScoreJSON() << endl;
     } else {
         SimulatedAnnealing simulatedAnnealing(teachers, classes, grades, fixedTimes);
         Timetables timetables = simulatedAnnealing.calculate();
-        cout << timetables.getJSON() << endl;
+        cout << timetables.getJSON(hideSchedules) << endl;
     }
     
     return 0;
