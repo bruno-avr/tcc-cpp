@@ -1,7 +1,7 @@
 #include "Swap.h"
 #include <algorithm>
 
-Swap::Swap(int _day1, int _pos1, int _day2, int _pos2) : day1(_day1), pos1(_pos1), day2(_day2), pos2(_pos2), delta(0) {}
+Swap::Swap(int _day1, int _pos1, int _day2, int _pos2) : day1(_day1), pos1(_pos1), day2(_day2), pos2(_pos2), delta(0), penaltyDelta(0) {}
 
 void Swap::addTimetableIndex(int index) {
     timetableIndex = index;
@@ -9,6 +9,10 @@ void Swap::addTimetableIndex(int index) {
 
 void Swap::addDelta(int _delta) {
     delta += _delta;
+}
+
+void Swap::addPenaltyDelta(int _delta) {
+    penaltyDelta += _delta;
 }
 
 int Swap::getDay1() {
@@ -35,8 +39,13 @@ int Swap::getDelta() {
     return delta;
 }
 
+int Swap::getPenaltyDelta() {
+    return penaltyDelta;
+}
+
 void Swap::reverse() {
     swap(day1, day2);
     swap(pos1, pos2);
     delta *= -1;
+    penaltyDelta *= -1;
 }

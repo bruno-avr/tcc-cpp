@@ -19,6 +19,7 @@ class Timetables {
   map<pair<string, string>, string> teacherIdBySubject;
   vector<Timetable> timetables;
   int numConflicts;
+  int penalty;
 
 public:
   Timetables(vector<Teacher> &_teachers, vector<Class> &_classes, vector<Grade> &_grades, unordered_map<string, unordered_set<int>> &_fixedTimes);
@@ -26,9 +27,9 @@ public:
   string getJSON();
   string getScoreJSON();
   int getNumConflicts();
+  int getPenalty();
   Swap makeRandomSwap();
   void makeSwap(Swap _swap);
-
 };
 
 

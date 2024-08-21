@@ -24,15 +24,17 @@ public:
   string toString();
   string getJSON();
   int calculateNumConflicts(Timetable &other);
+  int getIdlePenalty();
   int getNumConflictsInPos(Timetable &other, int weekDay, int pos);
   int getNumConflictsInTimestamp(string &teacherId, int weekDay, int startingTime);
   Swap getRandomSwap();
-  int makeSwap(Swap &_swap);
+  pair<int,int> makeSwap(Swap &_swap);
   int getNumOverloadedSubjects();
 
 private:
   int getRandomDay();
   pair<int,int> getValidDayPos();
+  int getDayIdlePenalty(int day);
 
 };
 

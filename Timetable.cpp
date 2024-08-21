@@ -93,6 +93,29 @@ int Timetable::calculateNumConflicts(Timetable &other) {
     return num;
 }
 
+int Timetable::getDayIdlePenalty(int day) {
+    int num = 0;
+    unordered_map<string, int> lastAppearance;
+    for (int j = 0; j < currTeachers[day].size(); j++) {
+        string &teacher = currTeachers[day][j];
+        if (teacher != EMPTY) {
+            if (lastAppearance.count(teacher)) {
+                num += j - lastAppearance[teacher]-1;
+            }
+            lastAppearance[teacher] = j;
+        }
+    }
+    return num;
+}
+
+int Timetable::getIdlePenalty() {
+    int num = 0;
+    for (int i = 0; i < NUM_WEEK_DAYS; i++) {
+        num += getDayIdlePenalty(i);
+    }
+    return num;
+}
+
 int Timetable::getNumConflictsInPos(Timetable &other, int weekDay, int pos) {
     if (currTeachers[weekDay][pos] != EMPTY) {
         return other.getNumConflictsInTimestamp(currTeachers[weekDay][pos], weekDay, startingTimes[weekDay][pos]);
@@ -140,8 +163,8 @@ Swap Timetable::getRandomSwap() {
     return Swap(randomDay1, randomPos1, randomDay2, randomPos2);
 }
 
-int Timetable::makeSwap(Swap &_swap) {
-    int delta = 0;
+pair<int,int> Timetable::makeSwap(Swap &_swap) {
+    int delta = 0, penaltyDelta = 0;
     int oldSub = numSubjectsPerDay[_swap.getDay1()][currSubjects[_swap.getDay1()][_swap.getPos1()]]--;
     int oldAdd = numSubjectsPerDay[_swap.getDay1()][currSubjects[_swap.getDay2()][_swap.getPos2()]]++;
     if (oldSub > MAX_DAILY_CLASS_LIMIT) delta--;
@@ -152,10 +175,18 @@ int Timetable::makeSwap(Swap &_swap) {
     if (oldSub > MAX_DAILY_CLASS_LIMIT) delta--;
     if (oldAdd >= MAX_DAILY_CLASS_LIMIT) delta++;
 
+    int oldIdle = getDayIdlePenalty(_swap.getDay1());
+    if (_swap.getDay1() != _swap.getDay2()) oldIdle += getDayIdlePenalty(_swap.getDay2());
+    
     swap(currSubjects[_swap.getDay1()][_swap.getPos1()], currSubjects[_swap.getDay2()][_swap.getPos2()]);
     swap(currTeachers[_swap.getDay1()][_swap.getPos1()], currTeachers[_swap.getDay2()][_swap.getPos2()]);
 
-    return delta;
+    int newIdle = getDayIdlePenalty(_swap.getDay1());
+    if (_swap.getDay1() != _swap.getDay2()) newIdle += getDayIdlePenalty(_swap.getDay2());
+
+    penaltyDelta += newIdle - oldIdle;
+
+    return {delta, penaltyDelta};
 }
 
 string convertTime(int time) {

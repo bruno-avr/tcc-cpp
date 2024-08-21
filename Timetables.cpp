@@ -21,16 +21,22 @@ Timetables::Timetables(vector<Teacher> &_teachers, vector<Class> &_classes, vect
     
     // calculating number of conflicts
     numConflicts = 0;
+    penalty = 0;
     for (int i = 0; i < timetables.size(); i++) {
         for (int j = i+1; j < timetables.size(); j++) {
             numConflicts += timetables[i].calculateNumConflicts(timetables[j]);
         }
+        penalty += timetables[i].getIdlePenalty();
         numConflicts += timetables[i].getNumOverloadedSubjects();
     }
 }
 
 int Timetables::getNumConflicts() {
     return numConflicts;
+}
+
+int Timetables::getPenalty() {
+    return penalty;
 }
 
 Swap Timetables::makeRandomSwap() {
@@ -47,7 +53,7 @@ Swap Timetables::makeRandomSwap() {
         oldNumConflicts+=timetables[randomTimetable].getNumConflictsInPos(timetables[i], swap.getDay2(), swap.getPos2());
     }
 
-    int delta = timetables[randomTimetable].makeSwap(swap);
+    auto [delta, penaltyDelta] = timetables[randomTimetable].makeSwap(swap);
 
     for (int i = 0; i < timetables.size(); i++) {
         if (i == randomTimetable) continue;
@@ -60,12 +66,17 @@ Swap Timetables::makeRandomSwap() {
     
     numConflicts += delta;
 
+    swap.addPenaltyDelta(penaltyDelta);
+    
+    penalty += penaltyDelta;
+
     return swap;
 }
 
 void Timetables::makeSwap(Swap _swap) {
     timetables[_swap.getTimetableIndex()].makeSwap(_swap);
     numConflicts += _swap.getDelta();
+    penalty += _swap.getPenaltyDelta();
 }
 
 string Timetables::toString() {
@@ -84,7 +95,7 @@ string Timetables::getJSON() {
     if (numConflicts == 0) s += "true,\n";
     else s += "false,\n";
 
-    s += "  \"score\": 0,\n";
+    s += "  \"score\": " + to_string(penalty) + ",\n";
 
     s += "  \"schedules\": [\n";
     for (int i = 0; i < timetables.size(); i++) {
@@ -102,7 +113,7 @@ string Timetables::getScoreJSON() {
     if (numConflicts == 0) s += "true,\n";
     else s += "false,\n";
 
-    s += "  \"score\": 0\n";
+    s += "  \"score\": " + to_string(penalty) + "\n";
 
     s += "}";
     return s;

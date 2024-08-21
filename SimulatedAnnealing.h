@@ -16,6 +16,9 @@ class SimulatedAnnealing {
 public:
   SimulatedAnnealing(vector<Teacher> &_teachers, vector<Class> &_classes, vector<Grade> &_grades, unordered_map<string, unordered_set<int>> &_fixedTimes);
   Timetables calculate();
+private:
+  void calculateSoft();
+  void calculateHard();
 };
 
 
