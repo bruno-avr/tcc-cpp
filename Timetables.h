@@ -16,6 +16,7 @@ class Timetables {
   int numClasses;
   vector<Class> classes;
   unordered_map<string, Grade> gradeById;
+  unordered_map<string, Teacher> teacherByTeacherId;
   map<pair<string, string>, string> teacherIdBySubject;
   vector<Timetable> timetables;
   int numConflicts;

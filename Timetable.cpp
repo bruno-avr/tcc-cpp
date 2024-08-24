@@ -6,7 +6,9 @@ const int NUM_WEEK_DAYS = 7;
 const int CLASS_LENGTH = 50; // in minutes
 const int MAX_DAILY_CLASS_LIMIT = 2; // maximum number of the same class that can be held in a single day
 
-Timetable::Timetable(Class &_class, Grade &_grade, map<pair<string,string>, string> &_teacherIdBySubject, unordered_set<int> &_fixedTimes) {
+Timetable::Timetable(Class &_class, Grade &_grade, unordered_map<string, Teacher> &_teacherByTeacherId, map<pair<string,string>, string> &_teacherIdBySubject, unordered_set<int> &_fixedTimes)
+    : teacherByTeacherId(_teacherByTeacherId)
+{
     classId = _class.getId();
     bool hasDefaultSchedule = _class.getHasDefaultSchedule();
     fixedTimes = _fixedTimes;
@@ -112,6 +114,19 @@ int Timetable::getIdlePenalty() {
     int num = 0;
     for (int i = 0; i < NUM_WEEK_DAYS; i++) {
         num += getDayIdlePenalty(i);
+    }
+    return num;
+}
+
+int Timetable::getTeacherAvailabilityPenalty() {
+    int num = 0;
+    for (int i = 0; i < NUM_WEEK_DAYS; i++) {
+        for (int j = 0; j < currTeachers[i].size(); j++) {
+            if (currTeachers[i][j] != EMPTY) {
+                Teacher &teacher = teacherByTeacherId.find(currTeachers[i][j])->second;
+                num += teacher.getAvailabilityPenalty(startingTimes[i][j]);
+            }
+        }
     }
     return num;
 }

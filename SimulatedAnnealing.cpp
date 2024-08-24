@@ -9,7 +9,7 @@
 // Respeitar a prioridade de cada professor.
 // Uma turma não deve ter nenhum horário vago entre aulas.
 // O tempo ocioso entre aulas de um professor deve ser o mínimo possível.
-// Um professor não deve encontrar uma classe para mais de uma aula não consecutiva.
+// [DONE] Um professor não deve encontrar uma classe para mais de uma aula não consecutiva.
 // O número de dias que um professor é alocado deve ser o mínimo possível.
 
 SimulatedAnnealing::SimulatedAnnealing(vector<Teacher> &_teachers, vector<Class> &_classes, vector<Grade> &_grades, unordered_map<string, unordered_set<int>> &_fixedTimes)
@@ -56,16 +56,29 @@ void SimulatedAnnealing::calculateSoft() {
     double temperature = initialTemperature;
     queue<Swap> q;
 
+    // for (int i = 0; i < 100; i++) {
     for (int i = 0; i < numIterations; i++) {
-        int oldNumConflicts = current.getPenalty();
+        int oldNumConflicts = current.getNumConflicts();
+        int oldPenalty = current.getPenalty();
 
         Swap _swap = current.makeRandomSwap();
 
-        int delta = current.getPenalty() - oldNumConflicts;
+        double delta = current.getPenalty() - oldPenalty;
+        if (current.getNumConflicts() > oldNumConflicts) {
+            double temperatureFactor = ((100-temperature)/10.0)*((double)i/numIterations);
+            // cout << "temperatureFactor: " << temperatureFactor << endl;
+            delta += (1.0+temperatureFactor) * (current.getNumConflicts() - oldNumConflicts);
+        }
 
-        if (current.getNumConflicts() == 0 && (delta <= 0 || (rand() / static_cast<double>(RAND_MAX)) < exp(-delta / temperature))) {
+        if (delta <= 0 || (rand() / static_cast<double>(RAND_MAX)) < exp(-delta / temperature)) {
             q.push(_swap);
-            if (current.getPenalty() < timetables.getPenalty()) {
+            if (
+                current.getNumConflicts() < timetables.getNumConflicts() or
+                (
+                    current.getNumConflicts() == timetables.getNumConflicts() and
+                    current.getPenalty() < timetables.getPenalty()
+                )
+            ) {
                 while (!q.empty()) {
                     timetables.makeSwap(q.front());
                     q.pop();
