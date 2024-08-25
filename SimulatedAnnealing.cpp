@@ -65,9 +65,10 @@ void SimulatedAnnealing::calculateSoft() {
 
         double delta = current.getPenalty() - oldPenalty;
         if (current.getNumConflicts() > oldNumConflicts) {
-            double temperatureFactor = ((100-temperature)/10.0)*((double)i/numIterations);
+            // double temperatureFactor = ((100-temperature)/10.0)*((double)i/numIterations);
             // cout << "temperatureFactor: " << temperatureFactor << endl;
-            delta += (1.0+temperatureFactor) * (current.getNumConflicts() - oldNumConflicts);
+            // delta += (1.0+temperatureFactor) * (current.getNumConflicts() - oldNumConflicts);
+            delta += current.getNumConflicts() - oldNumConflicts;
         }
 
         if (delta <= 0 || (rand() / static_cast<double>(RAND_MAX)) < exp(-delta / temperature)) {

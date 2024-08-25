@@ -31,6 +31,10 @@ public:
   int getPenalty();
   Swap makeRandomSwap();
   void makeSwap(Swap _swap);
+
+private:
+  string getScore();
+  
 };
 
 

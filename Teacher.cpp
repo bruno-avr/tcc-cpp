@@ -36,10 +36,13 @@ bool Teacher::isAvailable(int start, int end) {
     return false;
 }
 
-int Teacher::getAvailabilityPenalty(int start) {
-    int end = start + CLASS_LENGTH - 1;
+int Teacher::getAvailabilityPenalty(int weekDay, int start) {
+    int minutesInDay = 24*60;
 
-    if (isAvailable(start, end)) return 0;
+    int newStart = weekDay*minutesInDay + start;
+    int end = newStart + CLASS_LENGTH - 1;
+
+    if (isAvailable(newStart, end)) return 0;
     
     return priority;
 }

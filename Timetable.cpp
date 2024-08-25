@@ -124,7 +124,7 @@ int Timetable::getTeacherAvailabilityPenalty() {
         for (int j = 0; j < currTeachers[i].size(); j++) {
             if (currTeachers[i][j] != EMPTY) {
                 Teacher &teacher = teacherByTeacherId.find(currTeachers[i][j])->second;
-                num += teacher.getAvailabilityPenalty(startingTimes[i][j]);
+                num += teacher.getAvailabilityPenalty(i, startingTimes[i][j]);
             }
         }
     }
@@ -178,8 +178,37 @@ Swap Timetable::getRandomSwap() {
     return Swap(randomDay1, randomPos1, randomDay2, randomPos2);
 }
 
+int Timetable::getAvailabilityPenaltyDelta(Swap &_swap) {
+    string &teacher1Id = currTeachers[_swap.getDay1()][_swap.getPos1()];
+    string &teacher2Id = currTeachers[_swap.getDay2()][_swap.getPos2()];
+
+    Teacher &teacher1 = teacherByTeacherId.find(teacher1Id)->second;
+    Teacher &teacher2 = teacherByTeacherId.find(teacher2Id)->second;
+
+    int startingTime1 = startingTimes[_swap.getDay1()][_swap.getPos1()];
+    int startingTime2 = startingTimes[_swap.getDay2()][_swap.getPos2()];
+
+    int oldAvailabilityPenalty = 0;
+    int newAvailabilityPenalty = 0;
+
+    if (teacher1Id != EMPTY) {
+        oldAvailabilityPenalty += teacher1.getAvailabilityPenalty(_swap.getDay1(), startingTime1);
+        newAvailabilityPenalty += teacher1.getAvailabilityPenalty(_swap.getDay2(), startingTime2);
+    }
+    if (teacher2Id != EMPTY) {
+        oldAvailabilityPenalty += teacher2.getAvailabilityPenalty(_swap.getDay2(), startingTime2);
+        newAvailabilityPenalty += teacher2.getAvailabilityPenalty(_swap.getDay1(), startingTime1);
+    }
+
+    // cout << newAvailabilityPenalty << " " << oldAvailabilityPenalty << endl;
+    return newAvailabilityPenalty - oldAvailabilityPenalty;
+}
+
 pair<int,int> Timetable::makeSwap(Swap &_swap) {
     int delta = 0, penaltyDelta = 0;
+
+    penaltyDelta += getAvailabilityPenaltyDelta(_swap);
+    
     int oldSub = numSubjectsPerDay[_swap.getDay1()][currSubjects[_swap.getDay1()][_swap.getPos1()]]--;
     int oldAdd = numSubjectsPerDay[_swap.getDay1()][currSubjects[_swap.getDay2()][_swap.getPos2()]]++;
     if (oldSub > MAX_DAILY_CLASS_LIMIT) delta--;
@@ -190,16 +219,16 @@ pair<int,int> Timetable::makeSwap(Swap &_swap) {
     if (oldSub > MAX_DAILY_CLASS_LIMIT) delta--;
     if (oldAdd >= MAX_DAILY_CLASS_LIMIT) delta++;
 
-    int oldIdle = getDayIdlePenalty(_swap.getDay1());
-    if (_swap.getDay1() != _swap.getDay2()) oldIdle += getDayIdlePenalty(_swap.getDay2());
+    int oldIdlePenalty = getDayIdlePenalty(_swap.getDay1());
+    if (_swap.getDay1() != _swap.getDay2()) oldIdlePenalty += getDayIdlePenalty(_swap.getDay2());
     
     swap(currSubjects[_swap.getDay1()][_swap.getPos1()], currSubjects[_swap.getDay2()][_swap.getPos2()]);
     swap(currTeachers[_swap.getDay1()][_swap.getPos1()], currTeachers[_swap.getDay2()][_swap.getPos2()]);
 
-    int newIdle = getDayIdlePenalty(_swap.getDay1());
-    if (_swap.getDay1() != _swap.getDay2()) newIdle += getDayIdlePenalty(_swap.getDay2());
+    int newIdlePenalty = getDayIdlePenalty(_swap.getDay1());
+    if (_swap.getDay1() != _swap.getDay2()) newIdlePenalty += getDayIdlePenalty(_swap.getDay2());
 
-    penaltyDelta += newIdle - oldIdle;
+    penaltyDelta += newIdlePenalty - oldIdlePenalty;
 
     return {delta, penaltyDelta};
 }

@@ -15,7 +15,7 @@ public:
   Teacher(string _id, int _priority);
   void addSubject(string subject, string classId);
   void addTimeSlot(int start, int end);
-  int getAvailabilityPenalty(int start);
+  int getAvailabilityPenalty(int weekDay, int start);
   string toString();
   const set<pair<string, string>> getSubjects() const;
   const string getId() const;

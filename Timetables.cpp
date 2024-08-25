@@ -1,6 +1,7 @@
 #include "Timetables.h"
 #include <iostream>
 #include <stdlib.h>
+#include <cmath>
 
 Timetables::Timetables(vector<Teacher> &_teachers, vector<Class> &_classes, vector<Grade> &_grades, unordered_map<string, unordered_set<int>> &_fixedTimes) {
     for (auto &teacher : _teachers) {
@@ -81,6 +82,12 @@ void Timetables::makeSwap(Swap _swap) {
     penalty += _swap.getPenaltyDelta();
 }
 
+string Timetables::getScore() {
+    long double eps = 1e-8;
+    int score = 1e3*exp(-1e-3 * penalty) + eps;
+    return to_string(score);
+}
+
 string Timetables::toString() {
     string s = "";
     for (auto timetable : timetables) {
@@ -98,9 +105,9 @@ string Timetables::getJSON(bool hideSchedules) {
     else s += "false,\n";
 
     if (hideSchedules) {
-        s += "  \"score\": " + to_string(penalty) + "\n}";
+        s += "  \"score\": " + getScore() + "\n}";
     } else {
-        s += "  \"score\": " + to_string(penalty) + ",\n";
+        s += "  \"score\": " + getScore() + ",\n";
 
         s += "  \"schedules\": [\n";
         for (int i = 0; i < timetables.size(); i++) {
@@ -119,7 +126,7 @@ string Timetables::getScoreJSON() {
     if (numConflicts == 0) s += "true,\n";
     else s += "false,\n";
 
-    s += "  \"score\": " + to_string(penalty) + "\n";
+    s += "  \"score\": " + getScore() + "\n";
 
     s += "}";
     return s;

@@ -38,6 +38,7 @@ private:
   int getRandomDay();
   pair<int,int> getValidDayPos();
   int getDayIdlePenalty(int day);
+  int getAvailabilityPenaltyDelta(Swap &_swap);
 
 };
 
