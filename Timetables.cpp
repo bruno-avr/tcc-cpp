@@ -30,6 +30,7 @@ Timetables::Timetables(vector<Teacher> &_teachers, vector<Class> &_classes, vect
         }
         penalty += timetables[i].getIdlePenalty();
         penalty += timetables[i].getTeacherAvailabilityPenalty();
+        penalty += timetables[i].getEmptyPenalty();
         numConflicts += timetables[i].getNumOverloadedSubjects();
     }
 }

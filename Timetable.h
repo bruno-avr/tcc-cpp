@@ -27,6 +27,7 @@ public:
   string getJSON();
   int calculateNumConflicts(Timetable &other);
   int getIdlePenalty();
+  int getEmptyPenalty();
   int getTeacherAvailabilityPenalty();
   int getNumConflictsInPos(Timetable &other, int weekDay, int pos);
   int getNumConflictsInTimestamp(string &teacherId, int weekDay, int startingTime);
@@ -38,6 +39,7 @@ private:
   int getRandomDay();
   pair<int,int> getValidDayPos();
   int getDayIdlePenalty(int day);
+  int getDayEmptyPenalty(int day);
   int getAvailabilityPenaltyDelta(Swap &_swap);
 
 };

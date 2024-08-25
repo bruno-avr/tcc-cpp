@@ -102,7 +102,9 @@ int Timetable::getDayIdlePenalty(int day) {
         string &teacher = currTeachers[day][j];
         if (teacher != EMPTY) {
             if (lastAppearance.count(teacher)) {
-                num += j - lastAppearance[teacher]-1;
+                int factor = 3;
+                int numIdleLessons = (j - lastAppearance[teacher]-1);
+                num += factor * (1 << numIdleLessons);
             }
             lastAppearance[teacher] = j;
         }
@@ -114,6 +116,32 @@ int Timetable::getIdlePenalty() {
     int num = 0;
     for (int i = 0; i < NUM_WEEK_DAYS; i++) {
         num += getDayIdlePenalty(i);
+    }
+    return num;
+}
+
+int Timetable::getDayEmptyPenalty(int day) {
+    int num = 0;
+    int numEmpties = -1;
+    for (int j = 0; j < currTeachers[day].size(); j++) {
+        string &teacher = currTeachers[day][j];
+        if (teacher == EMPTY) {
+            if (numEmpties != -1) numEmpties++;
+        } else {
+            if (numEmpties > 0) {
+                int factor = 3;
+                num += factor * (1 << numEmpties);
+            }
+            numEmpties = 0;
+        }
+    }
+    return num;
+}
+
+int Timetable::getEmptyPenalty() {
+    int num = 0;
+    for (int i = 0; i < NUM_WEEK_DAYS; i++) {
+        num += getDayEmptyPenalty(i);
     }
     return num;
 }
@@ -221,6 +249,9 @@ pair<int,int> Timetable::makeSwap(Swap &_swap) {
 
     int oldIdlePenalty = getDayIdlePenalty(_swap.getDay1());
     if (_swap.getDay1() != _swap.getDay2()) oldIdlePenalty += getDayIdlePenalty(_swap.getDay2());
+
+    int oldEmptyPenalty = getDayEmptyPenalty(_swap.getDay1());
+    if (_swap.getDay1() != _swap.getDay2()) oldEmptyPenalty += getDayEmptyPenalty(_swap.getDay2());
     
     swap(currSubjects[_swap.getDay1()][_swap.getPos1()], currSubjects[_swap.getDay2()][_swap.getPos2()]);
     swap(currTeachers[_swap.getDay1()][_swap.getPos1()], currTeachers[_swap.getDay2()][_swap.getPos2()]);
@@ -228,7 +259,11 @@ pair<int,int> Timetable::makeSwap(Swap &_swap) {
     int newIdlePenalty = getDayIdlePenalty(_swap.getDay1());
     if (_swap.getDay1() != _swap.getDay2()) newIdlePenalty += getDayIdlePenalty(_swap.getDay2());
 
+    int newEmptyPenalty = getDayEmptyPenalty(_swap.getDay1());
+    if (_swap.getDay1() != _swap.getDay2()) newEmptyPenalty += getDayEmptyPenalty(_swap.getDay2());
+
     penaltyDelta += newIdlePenalty - oldIdlePenalty;
+    penaltyDelta += newEmptyPenalty - oldEmptyPenalty;
 
     return {delta, penaltyDelta};
 }

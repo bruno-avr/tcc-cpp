@@ -5,9 +5,9 @@
 
 // Restrições soft:
 
-// As aulas de um professor são agendadas somente quando ele/ela está disponível.
-// Respeitar a prioridade de cada professor.
-// Uma turma não deve ter nenhum horário vago entre aulas.
+// [DONE] As aulas de um professor são agendadas somente quando ele/ela está disponível.
+// [DONE] Respeitar a prioridade de cada professor.
+// [DONE] Uma turma não deve ter nenhum horário vago entre aulas.
 // O tempo ocioso entre aulas de um professor deve ser o mínimo possível.
 // [DONE] Um professor não deve encontrar uma classe para mais de uma aula não consecutiva.
 // O número de dias que um professor é alocado deve ser o mínimo possível.
