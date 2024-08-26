@@ -9,8 +9,9 @@
 // [DONE] Respeitar a prioridade de cada professor.
 // [DONE] Uma turma não deve ter nenhum horário vago entre aulas.
 // O tempo ocioso entre aulas de um professor deve ser o mínimo possível.
+// remover esse: cada turma pode ter horários diferentes. se um professor quer um horário específico, pode adicionar conforme prioridade
 // [DONE] Um professor não deve encontrar uma classe para mais de uma aula não consecutiva.
-// O número de dias que um professor é alocado deve ser o mínimo possível.
+// [DONE] O número de dias que um professor é alocado deve ser o mínimo possível.
 
 SimulatedAnnealing::SimulatedAnnealing(vector<Teacher> &_teachers, vector<Class> &_classes, vector<Grade> &_grades, unordered_map<string, unordered_set<int>> &_fixedTimes)
 : timetables(Timetables(_teachers, _classes, _grades, _fixedTimes)) {

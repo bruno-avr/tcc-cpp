@@ -18,12 +18,17 @@ Timetables::Timetables(vector<Teacher> &_teachers, vector<Class> &_classes, vect
     timetables = vector<Timetable>();
 
     for (int i = 0; i < _classes.size(); i++) {
-        timetables.push_back(Timetable(_classes[i], gradeById[_classes[i].getGradeId()], teacherByTeacherId, teacherIdBySubject, _fixedTimes[_classes[i].getId()]));
+        timetables.push_back(Timetable(_classes[i], gradeById[_classes[i].getGradeId()], numLessosPerDayByTeacherId, teacherByTeacherId, teacherIdBySubject, _fixedTimes[_classes[i].getId()]));
     }
     
     // calculating number of conflicts
     numConflicts = 0;
     penalty = 0;
+    for (auto &teacher : _teachers) {
+        int teacherDaysPenalty = numLessosPerDayByTeacherId[teacher.getId()].size();
+        penalty += teacherDaysPenalty;
+    }
+
     for (int i = 0; i < timetables.size(); i++) {
         for (int j = i+1; j < timetables.size(); j++) {
             numConflicts += timetables[i].calculateNumConflicts(timetables[j]);
@@ -83,10 +88,10 @@ void Timetables::makeSwap(Swap _swap) {
     penalty += _swap.getPenaltyDelta();
 }
 
-string Timetables::getScore() {
+int Timetables::getScore() {
     long double eps = 1e-8;
     int score = 1e3*exp(-1e-3 * penalty) + eps;
-    return to_string(score);
+    return score;
 }
 
 string Timetables::toString() {
@@ -106,9 +111,9 @@ string Timetables::getJSON(bool hideSchedules) {
     else s += "false,\n";
 
     if (hideSchedules) {
-        s += "  \"score\": " + getScore() + "\n}";
+        s += "  \"score\": " + to_string(getScore()) + "\n}";
     } else {
-        s += "  \"score\": " + getScore() + ",\n";
+        s += "  \"score\": " + to_string(getScore()) + ",\n";
 
         s += "  \"schedules\": [\n";
         for (int i = 0; i < timetables.size(); i++) {
@@ -127,7 +132,7 @@ string Timetables::getScoreJSON() {
     if (numConflicts == 0) s += "true,\n";
     else s += "false,\n";
 
-    s += "  \"score\": " + getScore() + "\n";
+    s += "  \"score\": " + to_string(getScore()) + "\n";
 
     s += "}";
     return s;

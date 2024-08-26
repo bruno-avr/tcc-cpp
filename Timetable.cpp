@@ -6,8 +6,8 @@ const int NUM_WEEK_DAYS = 7;
 const int CLASS_LENGTH = 50; // in minutes
 const int MAX_DAILY_CLASS_LIMIT = 2; // maximum number of the same class that can be held in a single day
 
-Timetable::Timetable(Class &_class, Grade &_grade, unordered_map<string, Teacher> &_teacherByTeacherId, map<pair<string,string>, string> &_teacherIdBySubject, unordered_set<int> &_fixedTimes)
-    : teacherByTeacherId(_teacherByTeacherId)
+Timetable::Timetable(Class &_class, Grade &_grade, unordered_map<string, unordered_map<int,int>> &_numLessosPerDayByTeacherId, unordered_map<string, Teacher> &_teacherByTeacherId, map<pair<string,string>, string> &_teacherIdBySubject, unordered_set<int> &_fixedTimes)
+    : numLessosPerDayByTeacherId(_numLessosPerDayByTeacherId), teacherByTeacherId(_teacherByTeacherId)
 {
     classId = _class.getId();
     bool hasDefaultSchedule = _class.getHasDefaultSchedule();
@@ -28,6 +28,7 @@ Timetable::Timetable(Class &_class, Grade &_grade, unordered_map<string, Teacher
                 auto &[subjectId, teacherId] = _class.getDefaultSchedule(weekDay, time);
                 currSubjects[weekDay].push_back(subjectId);
                 currTeachers[weekDay].push_back(teacherId);
+                numLessosPerDayByTeacherId[teacherId][weekDay]++;
 
             } else {
                 if (currSubject == subjects.size()) { // if already disposed all subjects
@@ -40,6 +41,7 @@ Timetable::Timetable(Class &_class, Grade &_grade, unordered_map<string, Teacher
                 // if class has a teacher for that subject
                 if (_teacherIdBySubject.count({subjects[currSubject].first, classId})) {
                     currTeachers[weekDay].push_back(_teacherIdBySubject[{subjects[currSubject].first, classId}]);
+                    numLessosPerDayByTeacherId[currTeachers[weekDay].back()][weekDay]++;
                 } else {
                     currTeachers[weekDay].push_back(EMPTY);
                 }
@@ -232,10 +234,39 @@ int Timetable::getAvailabilityPenaltyDelta(Swap &_swap) {
     return newAvailabilityPenalty - oldAvailabilityPenalty;
 }
 
+int Timetable::getTeacherDaysPenaltyDelta(Swap &_swap) {
+    string &teacher1Id = currTeachers[_swap.getDay1()][_swap.getPos1()];
+    string &teacher2Id = currTeachers[_swap.getDay2()][_swap.getPos2()];
+
+    auto &lessonsTeacher1 = numLessosPerDayByTeacherId[teacher1Id];
+    auto &lessonsTeacher2 = numLessosPerDayByTeacherId[teacher2Id];
+
+    int oldTeacherDaysPenalty = lessonsTeacher1.size();
+    if (teacher1Id != teacher2Id) oldTeacherDaysPenalty += lessonsTeacher2.size();
+
+    lessonsTeacher1[_swap.getDay1()]--;
+    if (lessonsTeacher1[_swap.getDay1()] == 0) {
+        lessonsTeacher1.erase(_swap.getDay1());
+    }
+    lessonsTeacher1[_swap.getDay2()]--;
+
+    lessonsTeacher2[_swap.getDay2()]--;
+    if (lessonsTeacher2[_swap.getDay2()] == 0) {
+        lessonsTeacher2.erase(_swap.getDay2());
+    }
+    lessonsTeacher2[_swap.getDay1()]--;
+
+    int newTeacherDaysPenalty = lessonsTeacher1.size();
+    if (teacher1Id != teacher2Id) newTeacherDaysPenalty += lessonsTeacher2.size();
+
+    return newTeacherDaysPenalty - oldTeacherDaysPenalty;
+}
+
 pair<int,int> Timetable::makeSwap(Swap &_swap) {
     int delta = 0, penaltyDelta = 0;
 
     penaltyDelta += getAvailabilityPenaltyDelta(_swap);
+    penaltyDelta += getTeacherDaysPenaltyDelta(_swap);
     
     int oldSub = numSubjectsPerDay[_swap.getDay1()][currSubjects[_swap.getDay1()][_swap.getPos1()]]--;
     int oldAdd = numSubjectsPerDay[_swap.getDay1()][currSubjects[_swap.getDay2()][_swap.getPos2()]]++;

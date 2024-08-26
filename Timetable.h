@@ -18,11 +18,12 @@ class Timetable {
   vector<vector<string>> currTeachers;
   vector<unordered_map<string, int>> numSubjectsPerDay;
   unordered_map<string, Teacher> &teacherByTeacherId;
+  unordered_map<string, unordered_map<int,int>> &numLessosPerDayByTeacherId;
   unordered_set<int> fixedTimes;
   string classId;
 
 public:
-  Timetable(Class &_class, Grade &_grade, unordered_map<string, Teacher> &_teacherByTeacherId, map<pair<string,string>, string> &_teacherIdBySubject, unordered_set<int> &_fixedTimes);
+  Timetable(Class &_class, Grade &_grade, unordered_map<string, unordered_map<int,int>> &_numLessosPerDayByTeacherId, unordered_map<string, Teacher> &_teacherByTeacherId, map<pair<string,string>, string> &_teacherIdBySubject, unordered_set<int> &_fixedTimes);
   string toString();
   string getJSON();
   int calculateNumConflicts(Timetable &other);
@@ -41,6 +42,7 @@ private:
   int getDayIdlePenalty(int day);
   int getDayEmptyPenalty(int day);
   int getAvailabilityPenaltyDelta(Swap &_swap);
+  int getTeacherDaysPenaltyDelta(Swap &_swap);
 
 };
 

@@ -115,8 +115,16 @@ int main(int argc, char **argv) {
         cout << timetables.getScoreJSON() << endl;
     } else {
         SimulatedAnnealing simulatedAnnealing(teachers, classes, grades, fixedTimes);
-        Timetables timetables = simulatedAnnealing.calculate();
-        cout << timetables.getJSON(hideSchedules) << endl;
+        Timetables bestTimetables = simulatedAnnealing.calculate();
+
+        for (int i = 0; i < 100; i++) {
+            SimulatedAnnealing newSimulatedAnnealing(teachers, classes, grades, fixedTimes);
+            Timetables newTimetables = newSimulatedAnnealing.calculate();
+            if (newTimetables.getScore() > bestTimetables.getScore()) {
+                swap(bestTimetables, newTimetables);
+            }
+        }
+        cout << bestTimetables.getJSON(hideSchedules) << endl;
     }
     
     return 0;

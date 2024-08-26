@@ -17,6 +17,7 @@ class Timetables {
   vector<Class> classes;
   unordered_map<string, Grade> gradeById;
   unordered_map<string, Teacher> teacherByTeacherId;
+  unordered_map<string, unordered_map<int,int>> numLessosPerDayByTeacherId;
   map<pair<string, string>, string> teacherIdBySubject;
   vector<Timetable> timetables;
   int numConflicts;
@@ -31,10 +32,8 @@ public:
   int getPenalty();
   Swap makeRandomSwap();
   void makeSwap(Swap _swap);
+  int getScore();
 
-private:
-  string getScore();
-  
 };
 
 
