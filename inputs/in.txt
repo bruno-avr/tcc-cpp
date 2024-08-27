@@ -1,4 +1,4 @@
-generate simulatedAnnealing
+generate simulatedAnnealing fast
 12
 9ae3dfbb-8637-4d63-845d-5f2670103ada 4 6 3
 9edc4c33-8a86-4c2d-97e2-45917fd4e918 e810febe-8013-43a6-8dc9-c60bc6a23db4

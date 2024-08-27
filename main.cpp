@@ -96,8 +96,11 @@ int main(int argc, char **argv) {
     srand(time(0));
     
     string type; cin >> type; // one of ["generate", "calculate_score", "fixed_recalculation"]
+
+    string executionSpeed = "fast";
     if (type != "calculate_score") {
         string metaheuristic; cin >> metaheuristic; // one of ["simulatedAnnealing"]
+        cin >> executionSpeed; // one of ["fast", "medium", "slow"]
     }
 
     vector<Teacher> teachers = getTeachers();
@@ -117,7 +120,10 @@ int main(int argc, char **argv) {
         SimulatedAnnealing simulatedAnnealing(teachers, classes, grades, fixedTimes);
         Timetables bestTimetables = simulatedAnnealing.calculate();
 
-        for (int i = 0; i < 100; i++) {
+        int numExecutions = 1;
+        if (executionSpeed == "medium") numExecutions = 100;
+        if (executionSpeed == "slow") numExecutions = 10000;
+        for (int i = 0; i < numExecutions; i++) {
             SimulatedAnnealing newSimulatedAnnealing(teachers, classes, grades, fixedTimes);
             Timetables newTimetables = newSimulatedAnnealing.calculate();
             if (newTimetables.getScore() > bestTimetables.getScore()) {
