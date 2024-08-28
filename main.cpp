@@ -100,7 +100,7 @@ int main(int argc, char **argv) {
     string executionSpeed = "fast";
     if (type != "calculate_score") {
         string metaheuristic; cin >> metaheuristic; // one of ["simulatedAnnealing"]
-        cin >> executionSpeed; // one of ["fast", "medium", "slow"]
+        cin >> executionSpeed; // one of ["fast", "balanced", "precision"]
     }
 
     vector<Teacher> teachers = getTeachers();
@@ -121,10 +121,10 @@ int main(int argc, char **argv) {
         Timetables bestTimetables = simulatedAnnealing.calculate();
 
         int numExecutions = 1;
-        if (executionSpeed == "medium") numExecutions = 100;
-        if (executionSpeed == "slow") numExecutions = 10000;
-        for (int i = 0; i < numExecutions; i++) {
-            SimulatedAnnealing newSimulatedAnnealing(teachers, classes, grades, fixedTimes);
+        if (executionSpeed == "balanced") numExecutions = 100;
+        if (executionSpeed == "precision") numExecutions = 10000;
+        for (int i = 1; i < numExecutions; i++) {
+            SimulatedAnnealing newSimulatedAnnealing(teachers, classes, grades, fixedTimes, true);
             Timetables newTimetables = newSimulatedAnnealing.calculate();
             if (newTimetables.getScore() > bestTimetables.getScore()) {
                 swap(bestTimetables, newTimetables);

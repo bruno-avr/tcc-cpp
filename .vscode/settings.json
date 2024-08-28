@@ -49,6 +49,8 @@
     "map": "cpp",
     "main2": "c",
     "queue": "cpp",
-    "ctime": "cpp"
+    "ctime": "cpp",
+    "cstring": "cpp",
+    "optional": "cpp"
   }
 }

@@ -2,6 +2,7 @@
 #include <iostream>
 #include <queue>
 #include <math.h>
+#include <random>
 
 // Restrições soft:
 
@@ -13,11 +14,24 @@
 // [DONE] Um professor não deve encontrar uma classe para mais de uma aula não consecutiva.
 // [DONE] O número de dias que um professor é alocado deve ser o mínimo possível.
 
-SimulatedAnnealing::SimulatedAnnealing(vector<Teacher> &_teachers, vector<Class> &_classes, vector<Grade> &_grades, unordered_map<string, unordered_set<int>> &_fixedTimes)
+SimulatedAnnealing::SimulatedAnnealing(vector<Teacher> &_teachers, vector<Class> &_classes, vector<Grade> &_grades, unordered_map<string, unordered_set<int>> &_fixedTimes, bool useRandomDefaults)
 : timetables(Timetables(_teachers, _classes, _grades, _fixedTimes)) {
     initialTemperature = 100.0;
     coolingRate = 0.99;
     numIterations = 10000;
+
+    if (useRandomDefaults) {
+        std::random_device rd;
+        std::mt19937 gen(rd());
+
+        std::uniform_real_distribution<> temperatureDist(50.0, 150.0);
+        std::uniform_real_distribution<> coolingRateDist(0.90, 0.999);
+        std::uniform_int_distribution<> iterationsDist(10000, 20000);
+
+        initialTemperature = temperatureDist(gen);
+        coolingRate = coolingRateDist(gen);
+        numIterations = iterationsDist(gen);
+    }
 }
 
 void SimulatedAnnealing::calculateHard() {
