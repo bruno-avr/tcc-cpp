@@ -59,7 +59,7 @@ Timetable::Timetable(Class &_class, Grade &_grade, unordered_map<string, unorder
     }
 
     if (currSubject != subjects.size()) { // couldnt dispose all subjects
-        cout << "Error: more subjects than available timespans." << endl;
+        // cout << "Error: more subjects than available timespans." << endl;
     }
 }
 
